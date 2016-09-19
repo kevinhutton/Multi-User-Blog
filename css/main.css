@@ -1,0 +1,156 @@
+@import  "https://fonts.googleapis.com/css?family=Roboto";
+
+/* Set font and padding for whole document */
+
+html,body,header {
+    font-family: 'Roboto',sans-serif;
+    width: 100%;
+}
+
+/* Prevent images from going over boundaries */
+
+img {
+    max-width: 100%;
+}
+
+/* Flexbox container */
+
+.container {
+    display: flex-box;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.menu {
+
+    margin-top: 20px;
+    width: 100%;
+    display: block;
+    min-height: 10px;
+    font-weight: bold;
+
+ }
+
+ .nav-button {
+
+    float:left;
+    padding-right: 10px;
+    margin-right: 10px;
+    background-color: gray;
+    border-radius: 12px;
+ }
+.page-title {
+    color: #222;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    text-decoration: none;
+    width: 100%;
+
+ }
+
+.post {
+
+    margin-bottom: 10px;
+    padding-top: 20px;
+}
+
+.post-subject-row {
+
+    width: 100%;
+    margin: auto;
+    box-sizing: border-box;
+    border-bottom: solid 2px black;
+
+ }
+ .post-subject {
+
+    font-size: 24px;
+    font-weight: bold;
+    width: 50%;
+    box-sizing: border-box;
+    padding-bottom: 5px;
+
+ }
+
+.post-user {
+    font-size: 12px;
+    bottom: 20px;
+    color: #999;
+    padding-bottom: 5px;
+    color: blue;
+    width: 100%;
+ }
+ .post-date {
+    font-size: 12px;
+    bottom: 20px;
+    color: #999;
+    padding-bottom: 5px;
+    float: right;
+    position: relative;
+    padding-right: 10px;
+ }
+
+ .post-content-row {
+    padding-top: 10px;
+    margin: auto;
+    box-sizing: border-box;
+    width: 100%;
+
+}
+
+.post-content {
+
+    font-size: 15px;
+    white-space: pre-wrap;
+}
+
+.post-modifications-row {
+    padding-top: 10px;
+    margin: auto;
+    box-sizing: border-box;
+    width: 100%;
+    font-weight: bold;
+    color: red;
+    float: left;
+}
+
+.comment-modifications-row {
+    padding-top: 10px;
+    margin: auto;
+    box-sizing: border-box;
+    width: 100%;
+    font-weight: bold;
+    color: red;
+    float: left;
+}
+
+.post-comments-row {
+    margin: auto;
+    box-sizing: border-box;
+    width: 100%;
+    display: inline-block;
+
+}
+
+.comment-content {
+
+    font-size: 15px;
+    white-space: pre-wrap;
+    padding-left: 10px;
+}
+
+.comment-username {
+
+    color: green;
+}
+
+
+/* If viewport is less than 1030px , display one work item per row for
+   easier reading */
+
+@media screen and (max-width: 1029px) {
+
+
+}

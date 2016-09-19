@@ -1,11 +1,9 @@
 
 <!DOCTYPE html>
-<html lang="en">
+
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>New Post</title>
+    <title>Login</title>
     <style type="text/css">
       .label {text-align: right}
       .error {color: red}
@@ -14,33 +12,34 @@
   </head>
 
   <body>
-    <h2>New Post</h2>
+    <h2>Login</h2>
     <form method="post">
       <table>
         <tr>
           <td class="label">
-            Subject
+            Username
           </td>
           <td>
-            <input type="text" name="subject" value="">
+            <input type="text" name="username" value="">
           </td>
           <td class="error">
-          {{subjecterror}}
+          {{usernameerror}}
           </td>
         </tr>
+
         <tr>
           <td class="label">
-            Body
+            Password
           </td>
           <td>
-            <textarea name="content"
-                style="height: 100px; width: 400px;"></textarea>
+            <input type="password" name="password" value="">
           </td>
           <td class="error">
-          {{contenterror}}
+          {{passworderror}}
           </td>
         </tr>
       </table>
+
       <input type="submit">
     </form>
   </body>

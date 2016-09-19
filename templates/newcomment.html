@@ -14,23 +14,13 @@
   </head>
 
   <body>
-    <h2>New Post</h2>
+    <h2>New Comment</h2>
     <form method="post">
+    <input type="hidden" name="postid" value="{{postid}}">
       <table>
         <tr>
           <td class="label">
-            Subject
-          </td>
-          <td>
-            <input type="text" name="subject" value="">
-          </td>
-          <td class="error">
-          {{subjecterror}}
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Body
+            Comment
           </td>
           <td>
             <textarea name="content"

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>New Post</title>
+    <title>Edit Post</title>
     <style type="text/css">
       .label {text-align: right}
       .error {color: red}
@@ -14,15 +14,16 @@
   </head>
 
   <body>
-    <h2>New Post</h2>
+    <h2>Edit Post</h2>
     <form method="post">
+      <input type="hidden" value="{{id}}" name="id">
       <table>
         <tr>
           <td class="label">
             Subject
           </td>
           <td>
-            <input type="text" name="subject" value="">
+            <input type="text" name="subject" value="{{subject}}">
           </td>
           <td class="error">
           {{subjecterror}}
@@ -34,7 +35,7 @@
           </td>
           <td>
             <textarea name="content"
-                style="height: 100px; width: 400px;"></textarea>
+                style="height: 100px; width: 400px;">{{content}}</textarea>
           </td>
           <td class="error">
           {{contenterror}}
