@@ -5,6 +5,7 @@
 html,body,header {
     font-family: 'Roboto',sans-serif;
     width: 100%;
+    margin: auto;
 }
 
 /* Prevent images from going over boundaries */
@@ -23,11 +24,12 @@ img {
 
 .menu {
 
-    margin-top: 20px;
+    padding-bottom: 15px;
     width: 100%;
     display: block;
     min-height: 10px;
     font-weight: bold;
+    float: left
 
  }
 
@@ -52,8 +54,8 @@ img {
 
 .post {
 
-    margin-bottom: 10px;
-    padding-top: 20px;
+    padding-top: 10px;
+    width: 100%;
 }
 
 .post-subject-row {
@@ -70,7 +72,6 @@ img {
     font-weight: bold;
     width: 50%;
     box-sizing: border-box;
-    padding-bottom: 5px;
 
  }
 
@@ -78,7 +79,14 @@ img {
     font-size: 12px;
     bottom: 20px;
     color: #999;
-    padding-bottom: 5px;
+    color: blue;
+    width: 100%;
+ }
+
+ .post-likes {
+    font-size: 12px;
+    bottom: 20px;
+    color: #999;
     color: blue;
     width: 100%;
  }
@@ -94,7 +102,6 @@ img {
 
  .post-content-row {
     padding-top: 10px;
-    margin: auto;
     box-sizing: border-box;
     width: 100%;
 
@@ -131,6 +138,7 @@ img {
     box-sizing: border-box;
     width: 100%;
     display: inline-block;
+    padding-top: 10px;
 
 }
 
@@ -139,18 +147,15 @@ img {
     font-size: 15px;
     white-space: pre-wrap;
     padding-left: 10px;
+
 }
 
 .comment-username {
 
     color: green;
 }
+.error {
+    color: red;
 
+ }
 
-/* If viewport is less than 1030px , display one work item per row for
-   easier reading */
-
-@media screen and (max-width: 1029px) {
-
-
-}

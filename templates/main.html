@@ -38,7 +38,7 @@
           <div class="post-subject"> {{post['subject']}} </div>
           <div class="post-user">  Posted by: @{{post['username']}} </div>
           <div class="post-date">  Date: {{post['created']}} </div>
-          <div class="post-likes"> Likes: {{post['likes']}} </div>
+          <div class="post-likes"> Likes: {{post.likes.count()}} </div>
         </div>
 
         <div class="post-content-row">
@@ -55,21 +55,29 @@
             <input type="hidden" name="id" value="{{post.key().id()}}">
             <input type="submit" value="Delete Post" class="nav-button">
           </form>
-          <form action="/likepost" method="get">
+          {% endif %}
+
+          {% if currentUsername is not none %}
+           <form action="/likepost" method="post">
             <input type="hidden" name="id" value="{{post.key().id()}}">
             <input type="submit" value="Like Post" class="nav-button">
+          </form>
+          <form action="/unlikepost" method="post">
+            <input type="hidden" name="id" value="{{post.key().id()}}">
+            <input type="submit" value="Unlike Post" class="nav-button">
           </form>
           {% endif %}
         </div>
 
         <div class="post-comments-row">
-
           <div class="comment-modifications-row">
           <h4 class="comments-header">Comments</h4>
+          {% if currentUsername is not none %}
             <form action="/newcomment" method="get">
               <input type="hidden" name="id" value="{{post.key().id()}}">
               <input type="submit" value="Add Comment" class="nav-button">
             </form>
+          {% endif %}
           </div>
           {% for comment in post.comments %}
           <div class="comment-username"> @{{comment.username}} </div>

@@ -27,8 +27,10 @@ class Welcome(webapp2.RequestHandler):
             self.redirect('/signup')
         self.response.write(template.render(username=SecureCookie.decryptSecureCookie(username)))
 
+# Class used to secure cookies such that values cannot be tampered with
 class SecureCookie():
 
+#Secret key used while encrypting cookie
     secret = "secure"
     saltSize = 5
 
@@ -60,6 +62,7 @@ class SecureCookie():
             return False
         return True
 
+# Class used to securely store encrypted passwords in User database/entity
 class Password():
 
     secret = "secure"
@@ -83,7 +86,7 @@ class Password():
         passwordHash = hashlib.sha256(Password.secret + password + salt).hexdigest()
         actualPasswordHash = hashlib.sha256(Password.secret + actualPassword + salt).hexdigest()
         return passwordHash == actualPasswordHash
-
+# Signup page
 class Signup(webapp2.RequestHandler):
 
     def createUser(self,username,password,email=None):
@@ -128,6 +131,10 @@ class Signup(webapp2.RequestHandler):
         if not self.validateUsername(username):
             errorMessages['usernameerror'] = "Invalid Username"
             errorFound = True
+        if User.all().filter("username =",username).get():
+            errorMessages['usernameerror'] = "Username already exists !"
+            errorFound = True
+
         if not self.validatePasswords(password,verify):
             errorMessages['passworderror'] = "Invalid Passwords"
             errorFound = True
@@ -136,12 +143,14 @@ class Signup(webapp2.RequestHandler):
             errorFound = True
 
         if errorFound:
-            template = jinja_env.get_template('frontend.html')
+            template = jinja_env.get_template('signup.html')
             self.response.write(template.render(**errorMessages))
         else:
             self.createUser(username,password,email)
             self.response.headers.add_header('Set-Cookie', 'username=%s; Path=/' % ( SecureCookie.createSecureCookie( str(username) ) ) )
             self.redirect('/')
+
+#Login page
 
 class Login(webapp2.RequestHandler):
 
@@ -191,11 +200,14 @@ class Login(webapp2.RequestHandler):
             self.response.headers.add_header('Set-Cookie', 'username=%s; Path=/' % (SecureCookie.createSecureCookie(str(username))))
             self.redirect('/welcome')
 
+#Logout page
+
 class Logout(webapp2.RequestHandler):
     def get(self):
         self.response.headers.add_header('Set-Cookie', 'username=''; Path=/')
         self.redirect('/')
 
+# Create a new post
 
 class Newpost(webapp2.RequestHandler):
 
@@ -212,7 +224,7 @@ class Newpost(webapp2.RequestHandler):
 
     def insertPost(self,subject,content,username):
 
-        newpost = Post(subject=subject,content=content,username=username,likes=0)
+        newpost = Post(subject=subject,content=content,username=username)
         newpost.put()
         return newpost.key().id()
 
@@ -247,6 +259,7 @@ class Newpost(webapp2.RequestHandler):
                 key = self.insertPost(subject,content,username)
                 time.sleep(5)
                 self.redirect('/%s' % key)
+# Create a new comment for a given post
 
 class Newcomment(webapp2.RequestHandler):
 
@@ -294,6 +307,8 @@ class Newcomment(webapp2.RequestHandler):
                 time.sleep(1)
                 self.redirect('/')
 
+# Edit a given post
+
 class Editpost(webapp2.RequestHandler):
 
     def validateSubject(self,subject):
@@ -312,7 +327,6 @@ class Editpost(webapp2.RequestHandler):
         post = Post.get_by_id(int(id))
         post.subject = subject
         post.content = content
-        post.likes = 0
         post.put()
         return id
 
@@ -347,6 +361,7 @@ class Editpost(webapp2.RequestHandler):
             time.sleep(1)
             self.redirect('/%s' % key)
 
+#Delete a given post
 
 class Deletepost(webapp2.RequestHandler):
 
@@ -371,6 +386,8 @@ class Deletepost(webapp2.RequestHandler):
             time.sleep(1)
             self.redirect('/')
 
+# Delete a given comment
+
 class Deletecomment(webapp2.RequestHandler):
 
     def deleteComment(self,comment):
@@ -393,27 +410,55 @@ class Deletecomment(webapp2.RequestHandler):
             time.sleep(1)
             self.redirect('/')
 
+# Like a given post
+
 class Likepost(webapp2.RequestHandler):
 
-    def likePost(self,id):
-        post = Post.get_by_id(int(id))
-        post.delete()
-        return id
+    def insertLike(self,post,username):
+
+        like = Like(post=post,username=username)
+        like.put()
+        return like.key().id()
+
+    def post(self):
+        postid      =  self.request.get('id')
+        post = Post.get_by_id(int(postid))
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        like = post.likes.filter("username =",currentUsername).get()
+        if not like and currentUsername and currentUsername != post.username :
+            key = self.insertLike(post,currentUsername)
+            time.sleep(1)
+            self.redirect('/')
+        elif not currentUsername :
+            template = jinja_env.get_template('error.html')
+            self.response.write(template.render(errorMessage="You must be logged in to like a post"))
+        else:
+            self.redirect('/')
+
+
+class Unlikepost(webapp2.RequestHandler):
+
+
+    def deleteLike(self,like):
+
+        like.delete()
 
     def post(self):
 
-        postid      =  self.request.get('postid')
-        currentUsername = ""
-        errorMessages = {}
-        errorFound = False
-
-        if errorFound:
-            template = jinja_env.get_template('editpost.html')
-            self.response.write(template.render(**errorMessages))
+        postid      =  self.request.get('id')
+        post = Post.get_by_id(int(postid))
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        like = post.likes.filter("username =",currentUsername).get()
+        if like and (currentUsername == like.username):
+            key = self.deleteLike(like)
+            time.sleep(1)
+            self.redirect('/')
+        elif not currentUsername:
+            template = jinja_env.get_template('error.html')
+            self.response.write(template.render(errorMessage="You must be logged in to delete a post"))
         else:
+            self.redirect('/')
 
-            key = self.likePost(id)
-            self.redirect('/%s' % key)
 
 # Post Entity for Google App Engine Datastore (E.g. Our DB table)
 
@@ -422,7 +467,6 @@ class Post(db.Model):
     content  = db.TextProperty(required = True)
     created  = db.DateTimeProperty(auto_now_add = True)
     username = db.StringProperty(required = True)
-    likes    = db.IntegerProperty(required = True)
 
 class User(db.Model):
     username = db.StringProperty(required = True)
@@ -435,6 +479,9 @@ class Comment(db.Model):
     created  = db.DateTimeProperty(auto_now_add = True)
     username = db.StringProperty(required = True)
 
+class Like(db.Model):
+    post = db.ReferenceProperty(Post, collection_name='likes')
+    username = db.StringProperty(required = True)
 
 # Main Page Handler
 
@@ -462,8 +509,9 @@ class MainPage(webapp2.RequestHandler):
             currentUsername = SecureCookie.decryptSecureCookie(currentUsernameCookie)
         else:
             currentUsername = None
+        numberOfLikes = Like.all(keys_only=True).count()
 
-        self.response.write(template.render(posts=posts,currentUsername=currentUsername))
+        self.response.write(template.render(posts=posts,currentUsername=currentUsername,numberOfLikes=numberOfLikes))
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -473,8 +521,11 @@ app = webapp2.WSGIApplication([
     ('/deletepost',Deletepost),
     ('/newcomment',Newcomment),
     ('/deletecomment',Deletecomment),
+    ('/likepost', Likepost),
+    ('/unlikepost', Unlikepost),
     ('/signup', Signup),
     ('/login', Login),
     ('/logout', Logout),
     ('/welcome', Welcome),
+
 ], debug=True)
