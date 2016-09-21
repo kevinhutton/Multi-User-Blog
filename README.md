@@ -29,16 +29,28 @@ This project was done as part of the Udacity Fullstack Nanodegree program
 Required Libraries and Dependencies
 -----------------------------------
 1) Web browser which supports HTML5 (E.g. Chrome,Firefox)
+2) git
+3) python 2.7+
+4) jinja2 python module
 
 How to Run Project
 ------------------
 Running Locally:
 
-1) git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project2.git
+1) Install jinja2 python module
 
-2) cd Udacity-Fullstack-Nanodegree-Project2/
+2) Install Google App Engine SDK for Python  (https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_Python)
 
-3) Using your web browser , open index.html
+2) git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git
+
+3) cd Udacity-Fullstack-Nanodegree-Project3/
+
+4) Run the local Google App Engine dev server using the Google App Engine SDK 
+
+      <your-google-cloud-sdk-install-location>/bin/dev_appserver.py .
+      
+5) The application should now be availavle at localhost:8080
 
 Running on Google App Engine:
 
+1) 
