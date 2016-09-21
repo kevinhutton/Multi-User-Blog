@@ -1,28 +1,26 @@
-@import  "https://fonts.googleapis.com/css?family=Roboto";
-
+@import "https://fonts.googleapis.com/css?family=Roboto";
 /* Set font and padding for whole document */
 
-html,body,header {
-    font-family: 'Roboto',sans-serif;
+html,
+body,
+header {
+    font-family: 'Roboto', sans-serif;
     width: 100%;
     margin: auto;
-
 }
-
 /* Prevent images from going over boundaries */
 
 img {
     max-width: 100%;
 }
-
 /* Flexbox container */
 
 .container {
     display: flex-box;
     flex-wrap: wrap;
     width: 100%;
-
 }
+/* Menu div for storing navigation buttons */
 
 .menu {
     padding-top: 5px;
@@ -32,30 +30,30 @@ img {
     min-height: 10px;
     font-weight: bold;
     float: left
+}
+/* Menu navigation buttons */
 
- }
-
- .menu-item {
-
+.menu-item {
     padding-right: 3px;
     font-weight: bold;
-    float:left;
+    float: left;
     padding-right: 10px;
     margin-right: 10px;
     background-color: white;
     border-radius: 12px;
-  }
+}
+/* Buttons */
 
- .nav-button {
-
-    float:left;
+.nav-button {
+    float: left;
     padding-right: 10px;
     margin-right: 10px;
     background-color: gray;
     border-radius: 12px;
- }
+}
+/* Page title */
 
- .page-title {
+.page-title {
     color: #222;
     font-size: 40px;
     font-weight: bold;
@@ -63,31 +61,27 @@ img {
     margin-bottom: 30px;
     text-decoration: none;
     width: 100%;
-
- }
+}
+/* Post div */
 
 .post {
-
     padding-top: 10px;
     width: 100%;
-
 }
+/* Post subject */
 
 .post-subject-row {
-
     width: 100%;
     box-sizing: border-box;
     border-bottom: solid 2px black;
-
- }
- .post-subject {
-
+}
+.post-subject {
     font-size: 24px;
     font-weight: bold;
     width: 50%;
     box-sizing: border-box;
-
- }
+}
+/* Post user */
 
 .post-user {
     font-size: 12px;
@@ -95,16 +89,19 @@ img {
     color: #999;
     color: blue;
     width: 100%;
- }
+}
+/* Post likes */
 
- .post-likes {
+.post-likes {
     font-size: 12px;
     bottom: 20px;
     color: #999;
     color: blue;
     width: 100%;
- }
- .post-date {
+}
+/* Post data */
+
+.post-date {
     font-size: 12px;
     bottom: 20px;
     color: #999;
@@ -112,27 +109,21 @@ img {
     float: right;
     position: relative;
     right: 20px;
- }
+}
+/* Post content */
 
- .post-content-row {
+.post-content-row {
     padding-top: 5px;
     box-sizing: border-box;
     width: 100%;
-
-
-
 }
-
 .post-content {
-
     font-size: 14px;
     white-space: pre-wrap;
     width: 100%;
     padding-right: 25px;
-
-
-
 }
+/* Post modification buttons */
 
 .post-modifications-row {
     padding-top: 5px;
@@ -143,6 +134,7 @@ img {
     color: red;
     float: left;
 }
+/* Comment modification buttons */
 
 .comment-modifications-row {
     padding-top: 5px;
@@ -154,40 +146,33 @@ img {
     color: red;
     float: left;
 }
+/* Comments */
 
-.post-comments-row {
+.comments-row {
     margin: auto;
     box-sizing: border-box;
     width: 100%;
     display: inline-block;
     padding-top: 5px;
-
 }
-
 .comment-content {
-
     font-size: 14px;
     white-space: pre-wrap;
     padding-left: 10px;
     width: 100%
-
 }
-
 .comment-username {
     margin-top: 5px;
     color: green;
     width: 100%
-
 }
-
 .comment-modifications {
     margin-top: 5px;
     color: green;
     width: 100%
-
 }
+/* Error handling */
 
 .error {
     color: red;
- }
-
+}
