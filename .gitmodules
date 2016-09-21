@@ -1,3 +1,0 @@
-[submodule "authen"]
-	path = authen
-	url = https://github.com/kevinhutton/authentication-app.git
