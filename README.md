@@ -52,7 +52,7 @@ This project was done as part of the Udacity Fullstack Nanodegree program
 
    ``` <your-google-cloud-sdk-install-location>/bin/dev_appserver.py . ```
 
-5. The application should now be availavle at localhost:8080
+5. The application should now be available at localhost:8080
 
 ####Running on Google App Engine:
 
