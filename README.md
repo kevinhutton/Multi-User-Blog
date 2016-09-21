@@ -1,4 +1,4 @@
-# Udacity Fullstack Nanodegree Project 3 - Multi-User Blog 
+# Udacity Fullstack Nanodegree Project 3 - Multi-User Blog
 
 The purpose of this project was to create a Multi-User Blog application which runs on google app engine.
 
@@ -7,7 +7,7 @@ Users can do the following with this application
   a) Add/remove blog posts
   b) Comment on blog posts created by other users (or their own blog post)
   c) Upvote/like blog posts
-  
+
 The application has the following security/privacy features:
 
   a) Passwords are fully encrypted and storing securely within a Google App Engine Entity
@@ -15,8 +15,8 @@ The application has the following security/privacy features:
   c) Users can only post/comment/like while logged in
   d) Users can delete posts,comments,likes which were created by themselves
   e) Users can not modify posts/comments/likes created by other users
-  
-  
+
+
 This application demonstrates the following tools/technologies:
 
   a) python
@@ -48,10 +48,10 @@ Running Locally:
 
 3) cd Udacity-Fullstack-Nanodegree-Project3/
 
-4) Run the local Google App Engine dev server using the Google App Engine SDK 
+4) Run the local Google App Engine dev server using the Google App Engine SDK
 
    <your-google-cloud-sdk-install-location>/bin/dev_appserver.py .
-      
+
 5) The application should now be availavle at localhost:8080
 
 Running on Google App Engine:
@@ -61,10 +61,10 @@ Running on Google App Engine:
 2) Create a new project in Google’s Developer Console
 3) Install Google App Engine SDK for Python  (https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_Python)
 4) Configure the SDK for deployment by using
-    <your-google-cloud-sdk-install-location>/bin/gcloud init 
+    <your-google-cloud-sdk-install-location>/bin/gcloud init
 5) git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git
 6) cd Udacity-Fullstack-Nanodegree-Project3/
-7) Deploy the app using 
+7) Deploy the app using
       <your-google-cloud-sdk-install-location>/bin/gcloud app deploy
 8) Your app should be available at https://<your-unique-project-name.appspot.com/
 
