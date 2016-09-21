@@ -1,4 +1,4 @@
-#Imports
+# Imports
 
 import webapp2
 import os
@@ -11,99 +11,135 @@ import string
 import time
 from google.appengine.ext import db
 
-# Load jinja html templates
+# Load jinja2 html templates
 
-template_dir = os.path.join(os.path.dirname(__file__), 'templates' )
-jinja_env = jinja2.Environment( loader = jinja2.FileSystemLoader(template_dir) , autoescape = True)
-
+template_dir = os.path.join(os.path.dirname(__file__), 'templates')
+jinja_env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(template_dir),
+    autoescape=True)
 
 # Handler for Welcome page displayed after login or signup
+# If site is visted without username cookie , redirect to signup page
 
 class Welcome(webapp2.RequestHandler):
+
     def get(self):
         template = jinja_env.get_template('welcome.html')
         username = self.request.cookies.get('username')
         if not username or not SecureCookie.verifySecureCookie(username):
             self.redirect('/signup')
-        self.response.write(template.render(currentUsername=SecureCookie.decryptSecureCookie(username)))
+        self.response.write(
+            template.render(
+                currentUsername=SecureCookie.decryptSecureCookie(username)))
 
-# Class used to secure cookies with hash value so they can't be tampered with
+# Store cookies with hash value so they can't be tampered with
+
 class SecureCookie():
 
-#Secret key used while encrypting cookie , salt should be 4 characters long
+    # Secret key used while encrypting cookie , salt should be 5 characters
 
     secret = "secure"
     saltSize = 5
 
+    # Create Salt (E.g. Random string)
     @staticmethod
     def createSalt():
 
-        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase) for x in range(Password.saltSize))
+        return ''.join(
+            random.SystemRandom().choice(
+                string.ascii_uppercase +
+                string.ascii_lowercase) for x in range(
+                Password.saltSize))
 
+    # Create hash for given cookie value
     @staticmethod
     def createSecureCookie(value):
 
-        hashedValue = hashlib.sha256(SecureCookie.secret + str(value)).hexdigest()
-        return "%s|%s" % (value,hashedValue)
+        hashedValue = hashlib.sha256(
+            SecureCookie.secret +
+            str(value)).hexdigest()
+        return "%s|%s" % (value, hashedValue)
 
+    # Return cookie value and omit hash of value
     @staticmethod
     def decryptSecureCookie(cookieValue):
 
         if not cookieValue:
             return cookieValue
-        value,hashedValue = cookieValue.split("|")
+        value, hashedValue = cookieValue.split("|")
         return value
 
+    # verify a given cookie value and it's hash
     @staticmethod
     def verifySecureCookie(cookieValue):
         if not cookieValue:
             return False
-        value,hashedValue = cookieValue.split("|")
+        value, hashedValue = cookieValue.split("|")
         if not (SecureCookie.createSecureCookie(value) == cookieValue):
             return False
         return True
 
-# Class used to securely store encrypted passwords in User database/entity
+# Store encrypted passwords in User database/entity
+
 
 class Password():
 
     secret = "secure"
     saltSize = 5
 
+    # Create Salt (E.g. Random string)
     @staticmethod
     def createSalt():
 
-        return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase) for x in range(Password.saltSize))
+        return ''.join(
+            random.SystemRandom().choice(
+                string.ascii_uppercase +
+                string.ascii_lowercase) for x in range(
+                Password.saltSize))
 
+    # Encrypt given password
     @staticmethod
-    def createPasswordHash(password,inputSalt=None):
+    def createPasswordHash(password, inputSalt=None):
 
         if inputSalt is None:
             inputSalt = Password.createSalt()
-        hashPassword = hashlib.sha256(Password.secret + str(password) + str(inputSalt) ).hexdigest()
-        return "%s|%s" % (hashPassword,inputSalt)
+        hashPassword = hashlib.sha256(
+            Password.secret +
+            str(password) +
+            str(inputSalt)).hexdigest()
+        return "%s|%s" % (hashPassword, inputSalt)
 
+    # Verify encrypted password is valid
     @staticmethod
-    def validPassword(password,actualPassword,salt):
-        passwordHash = hashlib.sha256(Password.secret + password + salt).hexdigest()
-        actualPasswordHash = hashlib.sha256(Password.secret + actualPassword + salt).hexdigest()
+    def validPassword(password, actualPassword, salt):
+        passwordHash = hashlib.sha256(
+            Password.secret + password + salt).hexdigest()
+        actualPasswordHash = hashlib.sha256(
+            Password.secret + actualPassword + salt).hexdigest()
         return passwordHash == actualPasswordHash
+
+
 # Signup page handler
-#
+
 class Signup(webapp2.RequestHandler):
 
-    def createUser(self,username,password,email=None):
 
-        passwordHash = Password.createPasswordHash(password,None)
-        newuser = User(username=username,password=passwordHash,email=email)
+    # Create User Entity
+
+    def createUser(self, username, password, email=None):
+
+        passwordHash = Password.createPasswordHash(password, None)
+        newuser = User(username=username, password=passwordHash, email=email)
         newuser.put()
         return newuser.key().id()
 
-    def validateUsername(self,username):
+    # Make sure username is valid format
+    def validateUsername(self, username):
         USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
         return USER_RE.match(username)
 
-    def validatePasswords(self,password,verify):
+    # Make sure passwords are of valid format and that they match
+    def validatePasswords(self, password, verify):
 
         USER_RE = re.compile(r"^.{3,20}$")
         if USER_RE.match(password):
@@ -111,23 +147,28 @@ class Signup(webapp2.RequestHandler):
                 return True
         return False
 
-    def validateEmail(self,email):
+    # Make sure email format is valid
+
+    def validateEmail(self, email):
 
         USER_RE = re.compile(r"[\S]+@[\S]+.[\S]+$")
         return USER_RE.match(email)
 
+    # Generate signup form for user to fill out
     def get(self):
 
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         template = jinja_env.get_template('signup.html')
         self.response.write(template.render(currentUsername=currentUsername))
 
+    # Handle user signup data and create user if data is valid
     def post(self):
 
         username = self.request.get('username')
         password = self.request.get('password')
-        verify   = self.request.get('verify')
-        email    = self.request.get('email')
+        verify = self.request.get('verify')
+        email = self.request.get('email')
 
         errorMessages = {}
         errorFound = False
@@ -135,11 +176,11 @@ class Signup(webapp2.RequestHandler):
         if not self.validateUsername(username):
             errorMessages['usernameerror'] = "Invalid Username"
             errorFound = True
-        if User.all().filter("username =",username).get():
+        if User.all().filter("username =", username).get():
             errorMessages['usernameerror'] = "Username already exists !"
             errorFound = True
 
-        if not self.validatePasswords(password,verify):
+        if not self.validatePasswords(password, verify):
             errorMessages['passworderror'] = "Invalid Passwords"
             errorFound = True
         if email and not self.validateEmail(email):
@@ -150,33 +191,40 @@ class Signup(webapp2.RequestHandler):
             template = jinja_env.get_template('signup.html')
             self.response.write(template.render(**errorMessages))
         else:
-            self.createUser(username,password,email)
-            self.response.headers.add_header('Set-Cookie', 'username=%s; Path=/' % ( SecureCookie.createSecureCookie( str(username) ) ) )
+            self.createUser(username, password, email)
+            self.response.headers.add_header(
+                'Set-Cookie', 'username=%s; Path=/' %
+                (SecureCookie.createSecureCookie(
+                    str(username))))
             self.redirect('/')
 
-#Login page
+# Login page handler
+
 
 class Login(webapp2.RequestHandler):
 
-
-    def validateUsername(self,username):
+    # Make sure username is valid format
+    def validateUsername(self, username):
         USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
         return USER_RE.match(username)
 
-    def validatePassword(self,password):
+    # Make sure passwords are of valid format and that they match
+    def validatePassword(self, password):
 
         USER_RE = re.compile(r"^.{3,20}$")
         if USER_RE.match(password):
             return True
         return False
-
+    # Generate Login Form
     def get(self):
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         template = jinja_env.get_template('login.html')
         self.response.write(template.render(currentUsername=currentUsername))
+    # Verify login data and create username cookie if data is valid
     def post(self):
 
-        username =  self.request.get('username')
+        username = self.request.get('username')
         password = self.request.get('password')
         errorMessages = {}
         errorFound = False
@@ -189,9 +237,14 @@ class Login(webapp2.RequestHandler):
             errorFound = True
 
         try:
-            query = db.GqlQuery("SELECT * FROM User WHERE username='%s' " % username).get()
-            passwordHash,salt = query.password.split("|")
-            if not (Password.createPasswordHash(password,salt).split('|')[0] == passwordHash):
+            query = db.GqlQuery(
+                "SELECT * FROM User WHERE username='%s' " %
+                username).get()
+            passwordHash, salt = query.password.split("|")
+            if not (
+                Password.createPasswordHash(
+                    password,
+                    salt).split('|')[0] == passwordHash):
                 errorMessages['passworderror'] = "Incorrect Password"
                 errorFound = True
         except:
@@ -202,45 +255,53 @@ class Login(webapp2.RequestHandler):
             template = jinja_env.get_template('login.html')
             self.response.write(template.render(**errorMessages))
         else:
-            self.response.headers.add_header('Set-Cookie', 'username=%s; Path=/' % (SecureCookie.createSecureCookie(str(username))))
+            self.response.headers.add_header(
+                'Set-Cookie', 'username=%s; Path=/' %
+                (SecureCookie.createSecureCookie(
+                    str(username))))
             self.redirect('/welcome')
 
-#Logout page
+# Logout page handler
 
 class Logout(webapp2.RequestHandler):
+
+    # Delete username cookie
     def get(self):
         self.response.headers.add_header('Set-Cookie', 'username=; Path=/')
         self.redirect('/')
 
-# Create a new post
+# New Post handler
 
 class Newpost(webapp2.RequestHandler):
 
-    def validateSubject(self,subject):
-        if subject == '' :
-            return False;
-        return True;
+    # Make sure subject is valid format (E.g. non-empty)
+    def validateSubject(self, subject):
+        if subject == '':
+            return False
+        return True
 
-    def validateContent(self,content):
+    # Make sure content is valid format (E.g. non-empty)
+    def validateContent(self, content):
 
-        if content == '' :
-            return False;
-        return True;
+        if content == '':
+            return False
+        return True
 
-    def insertPost(self,subject,content,username):
+    # Create Post entity
+    def insertPost(self, subject, content, username):
 
-        newpost = Post(subject=subject,content=content,username=username)
+        newpost = Post(subject=subject, content=content, username=username)
         newpost.put()
         return newpost.key().id()
 
-
+    # Generate new post creation page
     def get(self):
         template = jinja_env.get_template('newpost.html')
         self.response.write(template.render())
-
+    # Handle new post creation data
     def post(self):
 
-        subject =  self.request.get('subject')
+        subject = self.request.get('subject')
         content = self.request.get('content')
 
         errorMessages = {}
@@ -257,36 +318,46 @@ class Newpost(webapp2.RequestHandler):
             template = jinja_env.get_template('newpost.html')
             self.response.write(template.render(**errorMessages))
         else:
-            username = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+            # If user is not logged in , redirect to login page
+            username = SecureCookie.decryptSecureCookie(
+                self.request.cookies.get('username'))
             if not username:
                 self.redirect('/login')
             else:
-                key = self.insertPost(subject,content,username)
-                time.sleep(5)
+            # Create Post entity , sleep prior to displaying the posting page due to Data Store Delay
+                key = self.insertPost(subject, content, username)
+                time.sleep(1)
                 self.redirect('/%s' % key)
-# Create a new comment for a given post
+
+# New comment handler
 
 class Newcomment(webapp2.RequestHandler):
 
+    # Make sure content is valid format (E.g. non-empty)
 
-    def validateContent(self,content):
+    def validateContent(self, content):
 
-        if content == '' :
-            return False;
-        return True;
+        if content == '':
+            return False
+        return True
 
-    def insertComment(self,post,content,username):
+    # Create comment entity
+    def insertComment(self, post, content, username):
 
-        newcomment = Comment(post=post,content=content,username=username)
+        newcomment = Comment(post=post, content=content, username=username)
         newcomment.put()
         return newcomment.key().id()
-
+    # Display comment creation page
     def get(self):
         postid = self.request.get('id')
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         template = jinja_env.get_template('newcomment.html')
-        self.response.write(template.render(postid=postid,currentUsername=currentUsername))
-
+        self.response.write(
+            template.render(
+                postid=postid,
+                currentUsername=currentUsername))
+    #Handle comment creation data
     def post(self):
 
         postid = self.request.get('postid')
@@ -304,39 +375,49 @@ class Newcomment(webapp2.RequestHandler):
             template = jinja_env.get_template('newcomment.html')
             self.response.write(template.render(**errorMessages))
         else:
-            username = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+            #Do not allow non-logged in users to create comments
+            username = SecureCookie.decryptSecureCookie(
+                self.request.cookies.get('username'))
             if not username:
                 self.redirect('/login')
             else:
-
-                key = self.insertComment(post,content,username)
+                # Create comment entity , sleep prior to displaying the posting page due to data Store delay
+                key = self.insertComment(post, content, username)
                 time.sleep(1)
                 self.redirect('/')
 
+#Edit comment handler
 
 class Editcomment(webapp2.RequestHandler):
 
+    # Make sure content is valid format (E.g. non-empty)
 
-    def validateContent(self,content):
+    def validateContent(self, content):
 
-        if content == '' :
-            return False;
-        return True;
+        if content == '':
+            return False
+        return True
 
-    def editComment(self,comment,content,username):
+    # Edit comment entity
+
+    def editComment(self, comment, content, username):
 
         comment.content = content
         comment.username = username
         comment.put()
         return comment.key().id()
 
+    # Display comment edit form
     def get(self):
 
         commentid = self.request.get('commentid')
         comment = Comment.get_by_id(int(commentid))
         template = jinja_env.get_template('editcomment.html')
-        self.response.write(template.render(commentid=commentid,content=comment.content))
-
+        self.response.write(
+            template.render(
+                commentid=commentid,
+                content=comment.content))
+    # Handle comment edit data
     def post(self):
 
         commentid = self.request.get('commentid')
@@ -354,14 +435,17 @@ class Editcomment(webapp2.RequestHandler):
             template = jinja_env.get_template('editcomment.html')
             self.response.write(template.render(**errorMessages))
         else:
-            currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+            #Do not allow non-logged in users to edit comments
+            currentUsername = SecureCookie.decryptSecureCookie(
+                self.request.cookies.get('username'))
             if not currentUsername:
                 self.redirect('/login')
+            #Only allow comment-owner to edit comment
             elif currentUsername != comment.username:
                 self.redirect('/login')
             else:
 
-                key = self.editComment(comment,content,currentUsername)
+                key = self.editComment(comment, content, currentUsername)
                 time.sleep(1)
                 self.redirect('/')
 
@@ -369,18 +453,22 @@ class Editcomment(webapp2.RequestHandler):
 
 class Editpost(webapp2.RequestHandler):
 
-    def validateSubject(self,subject):
-        if subject == '' :
-            return False;
-        return True;
+    #validate subject
 
-    def validateContent(self,content):
+    def validateSubject(self, subject):
+        if subject == '':
+            return False
+        return True
 
-        if content == '' :
-            return False;
-        return True;
+    #validate content
 
-    def editPost(self,id,subject,content):
+    def validateContent(self, content):
+
+        if content == '':
+            return False
+        return True
+    #Edit post entity
+    def editPost(self, id, subject, content):
 
         post = Post.get_by_id(int(id))
         post.subject = subject
@@ -388,18 +476,28 @@ class Editpost(webapp2.RequestHandler):
         post.put()
         return id
 
+    #Display edit post form
+
     def get(self):
         template = jinja_env.get_template('editpost.html')
         id = self.request.get('id')
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         post = Post.get_by_id(int(id))
-        self.response.write(template.render(id=post.key().id(),subject=post.subject,content=post.content,currentUsername=currentUsername))
+        self.response.write(
+            template.render(
+                id=post.key().id(),
+                subject=post.subject,
+                content=post.content,
+                currentUsername=currentUsername))
+
+    # Handle edit post data
 
     def post(self):
 
-        id      =  self.request.get('id')
-        subject =  self.request.get('subject')
-        content =  self.request.get('content')
+        id = self.request.get('id')
+        subject = self.request.get('subject')
+        content = self.request.get('content')
 
         errorMessages = {}
 
@@ -416,27 +514,27 @@ class Editpost(webapp2.RequestHandler):
             template = jinja_env.get_template('editpost.html')
             self.response.write(template.render(**errorMessages))
         else:
-            key = self.editPost(id,subject,content)
+            key = self.editPost(id, subject, content)
             time.sleep(1)
             self.redirect('/%s' % key)
 
-#Delete a given post
+# Delete a given post
 
 class Deletepost(webapp2.RequestHandler):
 
-    def deletePost(self,post):
+#Remove post entity
+    def deletePost(self, post):
         post.delete()
         return id
 
     def post(self):
-
-        postid      =  self.request.get('id')
+        postid = self.request.get('id')
         post = Post.get_by_id(int(postid))
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         errorMessages = {}
         errorFound = False
-
-
+        #Only allow deletion if post owner is issuing delete
         if post and currentUsername == post.username:
             key = self.deletePost(post)
         time.sleep(1)
@@ -444,16 +542,19 @@ class Deletepost(webapp2.RequestHandler):
 
 # Delete a given comment
 
+
 class Deletecomment(webapp2.RequestHandler):
 
-    def deleteComment(self,comment):
+# Remove comment entity
+    def deleteComment(self, comment):
         comment.delete()
 
     def post(self):
 
-        commentid =  self.request.get('commentid')
+        commentid = self.request.get('commentid')
         comment = Comment.get_by_id(int(commentid))
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
         errorMessages = {}
         errorFound = False
 
@@ -461,6 +562,7 @@ class Deletecomment(webapp2.RequestHandler):
             template = jinja_env.get_template('editpost.html')
             self.response.write(template.render(**errorMessages))
         else:
+            #Only allow deletion if comment owner is issuing delete
             if currentUsername == comment.username:
                 key = self.deleteComment(comment)
             time.sleep(1)
@@ -468,85 +570,105 @@ class Deletecomment(webapp2.RequestHandler):
 
 # Like a given post
 
+
 class Likepost(webapp2.RequestHandler):
 
-    def insertLike(self,post,username):
+# Create Like entity
 
-        like = Like(post=post,username=username)
+    def insertLike(self, post, username):
+
+        like = Like(post=post, username=username)
         like.put()
         return like.key().id()
 
+# Increment Like counter
+
     def post(self):
-        postid      =  self.request.get('id')
+        postid = self.request.get('id')
         post = Post.get_by_id(int(postid))
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
-        like = post.likes.filter("username =",currentUsername).get()
-        if not like and currentUsername and currentUsername != post.username :
-            key = self.insertLike(post,currentUsername)
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
+        like = post.likes.filter("username =", currentUsername).get()
+        if not like and currentUsername and currentUsername != post.username:
+            key = self.insertLike(post, currentUsername)
             time.sleep(1)
             self.redirect('/')
-        elif not currentUsername :
+        # Only allow likes when logged in
+        elif not currentUsername:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(errorMessage="You must be logged in to like a post"))
+            self.response.write(
+                template.render(
+                    errorMessage="You must be logged in to like a post"))
+        # Do not allow users to like their own post
         elif currentUsername == post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(errorMessage="You cannot like your own post !"))
+            self.response.write(
+                template.render(
+                    errorMessage="You cannot like your own post !"))
         else:
             self.redirect('/')
 
 
 class Unlikepost(webapp2.RequestHandler):
 
-
-    def deleteLike(self,like):
+    def deleteLike(self, like):
 
         like.delete()
 
     def post(self):
 
-        postid      =  self.request.get('id')
+        postid = self.request.get('id')
         post = Post.get_by_id(int(postid))
-        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
-        like = post.likes.filter("username =",currentUsername).get()
+        currentUsername = SecureCookie.decryptSecureCookie(
+            self.request.cookies.get('username'))
+        like = post.likes.filter("username =", currentUsername).get()
         if like and (currentUsername == like.username):
             key = self.deleteLike(like)
             time.sleep(1)
             self.redirect('/')
         elif not currentUsername:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(errorMessage="You must be logged in to delete a post"))
+            self.response.write(
+                template.render(
+                    errorMessage="You must be logged in to delete a post"))
         else:
             self.redirect('/')
 
 
-# Post Entity for Google App Engine Datastore (E.g. Our DB table)
+# Post Entity - Used to represent user posts
 
 class Post(db.Model):
-    subject  = db.StringProperty(required = True)
-    content  = db.TextProperty(required = True)
-    created  = db.DateTimeProperty(auto_now_add = True)
-    username = db.StringProperty(required = True)
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    username = db.StringProperty(required=True)
+
+# User Entity - Used to represent user login data
 
 class User(db.Model):
-    username = db.StringProperty(required = True)
-    password = db.StringProperty(required = True)
+    username = db.StringProperty(required=True)
+    password = db.StringProperty(required=True)
     email = db.StringProperty()
 
+# Comment Entity - Used to represent user comments
+
 class Comment(db.Model):
-    post     = db.ReferenceProperty(Post, collection_name='comments')
-    content  = db.TextProperty(required = True)
-    created  = db.DateTimeProperty(auto_now_add = True)
-    username = db.StringProperty(required = True)
+    post = db.ReferenceProperty(Post, collection_name='comments')
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    username = db.StringProperty(required=True)
+
+# Like Entity - Used to represent user like data
 
 class Like(db.Model):
     post = db.ReferenceProperty(Post, collection_name='likes')
-    username = db.StringProperty(required = True)
+    username = db.StringProperty(required=True)
 
-# Main Page Handler
+# Front/Main Page Handler
 
 class MainPage(webapp2.RequestHandler):
 
-    def get(self,id=None):
+    def get(self, id=None):
         # If id is specified in get request , display only that one post
         # Otherwise , display all posts
         posts = []
@@ -564,23 +686,29 @@ class MainPage(webapp2.RequestHandler):
 
         # Verify that cookie has not been spoofed
 
-        if  currentUsernameCookie and SecureCookie.verifySecureCookie(currentUsernameCookie):
-            currentUsername = SecureCookie.decryptSecureCookie(currentUsernameCookie)
+        if currentUsernameCookie and SecureCookie.verifySecureCookie(
+                currentUsernameCookie):
+            currentUsername = SecureCookie.decryptSecureCookie(
+                currentUsernameCookie)
         else:
             currentUsername = None
         numberOfLikes = Like.all(keys_only=True).count()
 
-        self.response.write(template.render(posts=posts,currentUsername=currentUsername,numberOfLikes=numberOfLikes))
+        self.response.write(
+            template.render(
+                posts=posts,
+                currentUsername=currentUsername,
+                numberOfLikes=numberOfLikes))
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/([0-9]+)', MainPage),
-    ('/newpost',Newpost),
-    ('/editpost',Editpost),
-    ('/deletepost',Deletepost),
-    ('/newcomment',Newcomment),
-    ('/deletecomment',Deletecomment),
-    ('/editcomment',Editcomment),
+    ('/newpost', Newpost),
+    ('/editpost', Editpost),
+    ('/deletepost', Deletepost),
+    ('/newcomment', Newcomment),
+    ('/deletecomment', Deletecomment),
+    ('/editcomment', Editcomment),
     ('/likepost', Likepost),
     ('/unlikepost', Unlikepost),
     ('/signup', Signup),
