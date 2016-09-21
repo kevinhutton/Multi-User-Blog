@@ -5,34 +5,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>New Post</title>
+    <title>Edit Comment</title>
     <link href="/css/main.css" rel="stylesheet">
-
-
   </head>
-
   <body>
-    <h2>New Post</h2>
+    <h2>Edit Comment</h2>
     <form method="post">
+    <input type="hidden" name="commentid" value="{{commentid}}">
       <table>
         <tr>
           <td class="label">
-            Subject
-          </td>
-          <td>
-            <input type="text" name="subject" value="">
-          </td>
-          <td class="error">
-          {{subjecterror}}
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Body
+            Comment
           </td>
           <td>
             <textarea name="content"
-                style="height: 100px; width: 400px;"></textarea>
+                style="height: 100px; width: 400px;">{{content}}</textarea>
           </td>
           <td class="error">
           {{contenterror}}

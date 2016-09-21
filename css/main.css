@@ -6,6 +6,7 @@ html,body,header {
     font-family: 'Roboto',sans-serif;
     width: 100%;
     margin: auto;
+
 }
 
 /* Prevent images from going over boundaries */
@@ -20,10 +21,11 @@ img {
     display: flex-box;
     flex-wrap: wrap;
     width: 100%;
+
 }
 
 .menu {
-
+    padding-top: 5px;
     padding-bottom: 15px;
     width: 100%;
     display: block;
@@ -33,6 +35,17 @@ img {
 
  }
 
+ .menu-item {
+
+    padding-right: 3px;
+    font-weight: bold;
+    float:left;
+    padding-right: 10px;
+    margin-right: 10px;
+    background-color: white;
+    border-radius: 12px;
+  }
+
  .nav-button {
 
     float:left;
@@ -41,7 +54,8 @@ img {
     background-color: gray;
     border-radius: 12px;
  }
-.page-title {
+
+ .page-title {
     color: #222;
     font-size: 40px;
     font-weight: bold;
@@ -56,12 +70,12 @@ img {
 
     padding-top: 10px;
     width: 100%;
+
 }
 
 .post-subject-row {
 
     width: 100%;
-    margin: auto;
     box-sizing: border-box;
     border-bottom: solid 2px black;
 
@@ -97,24 +111,31 @@ img {
     padding-bottom: 5px;
     float: right;
     position: relative;
-    padding-right: 10px;
+    right: 20px;
  }
 
  .post-content-row {
-    padding-top: 10px;
+    padding-top: 5px;
     box-sizing: border-box;
     width: 100%;
+
+
 
 }
 
 .post-content {
 
-    font-size: 15px;
+    font-size: 14px;
     white-space: pre-wrap;
+    width: 100%;
+    padding-right: 25px;
+
+
+
 }
 
 .post-modifications-row {
-    padding-top: 10px;
+    padding-top: 5px;
     margin: auto;
     box-sizing: border-box;
     width: 100%;
@@ -124,7 +145,8 @@ img {
 }
 
 .comment-modifications-row {
-    padding-top: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     margin: auto;
     box-sizing: border-box;
     width: 100%;
@@ -138,24 +160,34 @@ img {
     box-sizing: border-box;
     width: 100%;
     display: inline-block;
-    padding-top: 10px;
+    padding-top: 5px;
 
 }
 
 .comment-content {
 
-    font-size: 15px;
+    font-size: 14px;
     white-space: pre-wrap;
     padding-left: 10px;
+    width: 100%
 
 }
 
 .comment-username {
-
+    margin-top: 5px;
     color: green;
+    width: 100%
+
 }
+
+.comment-modifications {
+    margin-top: 5px;
+    color: green;
+    width: 100%
+
+}
+
 .error {
     color: red;
-
  }
 

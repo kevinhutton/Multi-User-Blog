@@ -10,26 +10,16 @@
   </head>
   <body>
   <div class="container">
-
     <h1 class="page-title">Multi-User Blog</h1>
-    <div class="menu">
-        {% if currentUsername is not none %}
-        <form action="/logout" method="get">
-            <input type="submit" class="nav-button"  value="Logout">
-        </form>
-        <form action="/newpost" method="get">
+    {% include 'menu.html' %}
+  <div class="menu">
+    {% if currentUsername is not none %}
+    <form action="/newpost" method="get">
             <input type="submit" class="nav-button"  value="New Post">
-        </form>
-        {% else %}
-        <form action="/login" method="get">
-              <input type="submit" class="nav-button" value="Login">
-        </form>
-        <form action="/signup" method="get">
-          <input type="submit" class="nav-button" value="Signup">
-        </form>
+    </form>
+    {% endif %}
+  </div>
 
-        {% endif %}
-    </div>
 
 
       {% for post in posts %}
@@ -82,11 +72,18 @@
           {% for comment in post.comments %}
           <div class="comment-username"> @{{comment.username}} </div>
           <div class="comment-content"> {{comment.content}} </div>
+
           {% if comment['username'] == currentUsername %}
-          <form action="/deletecomment" method="post">
-            <input type="hidden" name="commentid" value="{{comment.key().id()}}">
-            <input type="submit" value="Delete Comment">
-          </form>
+          <div class="comment-modifications">
+            <form action="/editcomment" method="get">
+              <input type="hidden" name="commentid" value="{{comment.key().id()}}">
+              <input type="submit" value="Edit Comment">
+            </form>
+            <form action="/deletecomment" method="post">
+              <input type="hidden" name="commentid" value="{{comment.key().id()}}">
+              <input type="submit" value="Delete Comment">
+            </form>
+          </div>
           {% endif %}
           {% endfor %}
         </div>

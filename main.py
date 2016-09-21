@@ -11,13 +11,13 @@ import string
 import time
 from google.appengine.ext import db
 
-#Load jinja html templates
+# Load jinja html templates
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates' )
 jinja_env = jinja2.Environment( loader = jinja2.FileSystemLoader(template_dir) , autoescape = True)
 
 
-#Handler for Welcome page displayed after successfull login or signup
+# Handler for Welcome page displayed after login or signup
 
 class Welcome(webapp2.RequestHandler):
     def get(self):
@@ -25,12 +25,13 @@ class Welcome(webapp2.RequestHandler):
         username = self.request.cookies.get('username')
         if not username or not SecureCookie.verifySecureCookie(username):
             self.redirect('/signup')
-        self.response.write(template.render(username=SecureCookie.decryptSecureCookie(username)))
+        self.response.write(template.render(currentUsername=SecureCookie.decryptSecureCookie(username)))
 
-# Class used to secure cookies such that values cannot be tampered with
+# Class used to secure cookies with hash value so they can't be tampered with
 class SecureCookie():
 
-#Secret key used while encrypting cookie
+#Secret key used while encrypting cookie , salt should be 4 characters long
+
     secret = "secure"
     saltSize = 5
 
@@ -63,6 +64,7 @@ class SecureCookie():
         return True
 
 # Class used to securely store encrypted passwords in User database/entity
+
 class Password():
 
     secret = "secure"
@@ -86,7 +88,8 @@ class Password():
         passwordHash = hashlib.sha256(Password.secret + password + salt).hexdigest()
         actualPasswordHash = hashlib.sha256(Password.secret + actualPassword + salt).hexdigest()
         return passwordHash == actualPasswordHash
-# Signup page
+# Signup page handler
+#
 class Signup(webapp2.RequestHandler):
 
     def createUser(self,username,password,email=None):
@@ -115,8 +118,9 @@ class Signup(webapp2.RequestHandler):
 
     def get(self):
 
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
         template = jinja_env.get_template('signup.html')
-        self.response.write(template.render())
+        self.response.write(template.render(currentUsername=currentUsername))
 
     def post(self):
 
@@ -167,8 +171,9 @@ class Login(webapp2.RequestHandler):
         return False
 
     def get(self):
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
         template = jinja_env.get_template('login.html')
-        self.response.write(template.render())
+        self.response.write(template.render(currentUsername=currentUsername))
     def post(self):
 
         username =  self.request.get('username')
@@ -204,7 +209,7 @@ class Login(webapp2.RequestHandler):
 
 class Logout(webapp2.RequestHandler):
     def get(self):
-        self.response.headers.add_header('Set-Cookie', 'username=''; Path=/')
+        self.response.headers.add_header('Set-Cookie', 'username=; Path=/')
         self.redirect('/')
 
 # Create a new post
@@ -278,8 +283,9 @@ class Newcomment(webapp2.RequestHandler):
 
     def get(self):
         postid = self.request.get('id')
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
         template = jinja_env.get_template('newcomment.html')
-        self.response.write(template.render(postid=postid))
+        self.response.write(template.render(postid=postid,currentUsername=currentUsername))
 
     def post(self):
 
@@ -304,6 +310,58 @@ class Newcomment(webapp2.RequestHandler):
             else:
 
                 key = self.insertComment(post,content,username)
+                time.sleep(1)
+                self.redirect('/')
+
+
+class Editcomment(webapp2.RequestHandler):
+
+
+    def validateContent(self,content):
+
+        if content == '' :
+            return False;
+        return True;
+
+    def editComment(self,comment,content,username):
+
+        comment.content = content
+        comment.username = username
+        comment.put()
+        return comment.key().id()
+
+    def get(self):
+
+        commentid = self.request.get('commentid')
+        comment = Comment.get_by_id(int(commentid))
+        template = jinja_env.get_template('editcomment.html')
+        self.response.write(template.render(commentid=commentid,content=comment.content))
+
+    def post(self):
+
+        commentid = self.request.get('commentid')
+        content = self.request.get('content')
+        errorMessages = {}
+        errorFound = False
+
+        comment = Comment.get_by_id(int(commentid))
+
+        if not self.validateContent(content):
+            errorMessages['contenterror'] = "Invalid Content"
+            errorFound = True
+
+        if errorFound:
+            template = jinja_env.get_template('editcomment.html')
+            self.response.write(template.render(**errorMessages))
+        else:
+            currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
+            if not currentUsername:
+                self.redirect('/login')
+            elif currentUsername != comment.username:
+                self.redirect('/login')
+            else:
+
+                key = self.editComment(comment,content,currentUsername)
                 time.sleep(1)
                 self.redirect('/')
 
@@ -333,8 +391,9 @@ class Editpost(webapp2.RequestHandler):
     def get(self):
         template = jinja_env.get_template('editpost.html')
         id = self.request.get('id')
+        currentUsername = SecureCookie.decryptSecureCookie(self.request.cookies.get('username'))
         post = Post.get_by_id(int(id))
-        self.response.write(template.render(id=post.key().id(),subject=post.subject,content=post.content))
+        self.response.write(template.render(id=post.key().id(),subject=post.subject,content=post.content,currentUsername=currentUsername))
 
     def post(self):
 
@@ -377,14 +436,11 @@ class Deletepost(webapp2.RequestHandler):
         errorMessages = {}
         errorFound = False
 
-        if errorFound:
-            template = jinja_env.get_template('editpost.html')
-            self.response.write(template.render(**errorMessages))
-        else:
-            if currentUsername == post.username:
-                key = self.deletePost(post)
-            time.sleep(1)
-            self.redirect('/')
+
+        if post and currentUsername == post.username:
+            key = self.deletePost(post)
+        time.sleep(1)
+        self.redirect('/')
 
 # Delete a given comment
 
@@ -432,6 +488,9 @@ class Likepost(webapp2.RequestHandler):
         elif not currentUsername :
             template = jinja_env.get_template('error.html')
             self.response.write(template.render(errorMessage="You must be logged in to like a post"))
+        elif currentUsername == post.username:
+            template = jinja_env.get_template('error.html')
+            self.response.write(template.render(errorMessage="You cannot like your own post !"))
         else:
             self.redirect('/')
 
@@ -521,6 +580,7 @@ app = webapp2.WSGIApplication([
     ('/deletepost',Deletepost),
     ('/newcomment',Newcomment),
     ('/deletecomment',Deletecomment),
+    ('/editcomment',Editcomment),
     ('/likepost', Likepost),
     ('/unlikepost', Unlikepost),
     ('/signup', Signup),

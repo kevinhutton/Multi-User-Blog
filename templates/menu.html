@@ -1,3 +1,11 @@
-<a href="#" onclick="history.go(-1)">Go Back</a>
-<a href="/login" class="nav-button">Login</a>
-<a href="/signup">signup</a>
+<div class="menu">
+    <a class="menu-item" href="#" onclick="history.go(-1)">Back</a>
+    {% if currentUsername is none or currentUsername|length <= 1 %}
+    <a class="menu-item" href="/login" class="nav-button">Login</a>
+    {% endif %}
+    {% if currentUsername is not none and currentUsername|length > 0 %}
+    <a class="menu-item" href="/logout" class="nav-button">Logout</a>
+    {% endif %}
+    <a class="menu-item" href="/signup">Sign up</a>
+    <a class="menu-item" href="/">Home</a>
+</div>
