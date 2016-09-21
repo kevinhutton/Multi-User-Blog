@@ -44,13 +44,13 @@ This project was done as part of the Udacity Fullstack Nanodegree program
 
 2. Install Google App Engine SDK for Python  (https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_Python)
 
-2. git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git
+2. ``` git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git ```
 
-3. cd Udacity-Fullstack-Nanodegree-Project3/
+3. ``` cd Udacity-Fullstack-Nanodegree-Project3/ ```
 
 4. Run the local Google App Engine dev server using the Google App Engine SDK
 
-   <your-google-cloud-sdk-install-location>/bin/dev_appserver.py .
+   ``` <your-google-cloud-sdk-install-location>/bin/dev_appserver.py . ```
 
 5. The application should now be availavle at localhost:8080
 
@@ -61,11 +61,11 @@ This project was done as part of the Udacity Fullstack Nanodegree program
 2. Create a new project in Google’s Developer Console
 3. Install Google App Engine SDK for Python  (https://cloud.google.com/appengine/downloads#Google_App_Engine_SDK_for_Python)
 4. Configure the SDK for deployment by using
-    <your-google-cloud-sdk-install-location>/bin/gcloud init
-5. git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git
-6. cd Udacity-Fullstack-Nanodegree-Project3/
+    ``` <your-google-cloud-sdk-install-location>/bin/gcloud init ```
+5. ``` git clone https://github.com/kevinhutton/Udacity-Fullstack-Nanodegree-Project3.git ```
+6. ``` cd Udacity-Fullstack-Nanodegree-Project3/ ```
 7. Deploy the app using
-      <your-google-cloud-sdk-install-location>/bin/gcloud app deploy
+      ``` <your-google-cloud-sdk-install-location>/bin/gcloud app deploy ```
 8. Your app should be available at https://<your-unique-project-name.appspot.com/
 
 
