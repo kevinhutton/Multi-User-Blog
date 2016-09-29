@@ -43,7 +43,7 @@ class Editcomment(webapp2.RequestHandler):
         # Only allow comment-owner to edit comment
         if currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment"))
+            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment",currentUsername=currentUsername))
             return
         template = jinja_env.get_template('editcomment.html')
         self.response.write(
@@ -72,7 +72,7 @@ class Editcomment(webapp2.RequestHandler):
         # Only allow comment-owner to edit comment
         if currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment"))
+            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment",currentUsername=currentUsername))
             return
 
         if not self.validateContent(content):

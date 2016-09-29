@@ -27,9 +27,9 @@ class Deletecomment(webapp2.RequestHandler):
         currentUsername = SecureCookie.decryptSecureCookie(username)
 
         # Only allow deletion if comment owner is issuing delete
-        if currentUsername != comment.username:
+        if comment and currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of this comment, you cannot delete this comment"))
+            self.response.write(template.render(error="You are not the owner of this comment, you cannot delete this comment",currentUsername=currentUsername))
             return
         else:
             key = self.deleteComment(comment)

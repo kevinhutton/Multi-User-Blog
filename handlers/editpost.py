@@ -50,7 +50,7 @@ class Editpost(webapp2.RequestHandler):
         # Only allow post-owner to edit post
         if currentUsername != post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post"))
+            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post",currentUsername=currentUsername))
             return
         self.response.write(
             template.render(
@@ -75,7 +75,7 @@ class Editpost(webapp2.RequestHandler):
         # Only allow post-owner to edit post
         if currentUsername != post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post"))
+            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post",currentUsername=currentUsername))
             return
         subject = self.request.get('subject')
         content = self.request.get('content')

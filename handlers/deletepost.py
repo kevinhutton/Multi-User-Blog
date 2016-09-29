@@ -28,7 +28,7 @@ class Deletepost(webapp2.RequestHandler):
         # Only allow deletion if post owner is issuing delete
         if currentUsername != post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of this post, you cannot delete this post"))
+            self.response.write(template.render(error="You are not the owner of this post, you cannot delete this post",currentUsername=currentUsername))
             return
         key = self.deletePost(post)
         time.sleep(1)

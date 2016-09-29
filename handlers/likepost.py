@@ -35,7 +35,7 @@ class Likepost(webapp2.RequestHandler):
         # Do not allow users to like their own post
         if currentUsername == post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not allowed to like your own post!"))
+            self.response.write(template.render(error="You are not allowed to like your own post!",currentUsername=currentUsername))
             return
         like = post.likes.filter("username =", currentUsername).get()
 

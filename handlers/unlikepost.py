@@ -29,7 +29,7 @@ class Unlikepost(webapp2.RequestHandler):
         # Do not allow users to unlike their own post
         if currentUsername == post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not allowed to unlike your own post!"))
+            self.response.write(template.render(error="You are not allowed to unlike your own post!",currentUsername=currentUsername))
             return
         # If the current user has liked the post before , proceed in deleting the like
         like = post.likes.filter("username =", currentUsername).get()
