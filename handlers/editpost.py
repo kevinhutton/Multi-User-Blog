@@ -5,7 +5,8 @@ import time
 import re
 from models.like import Like
 from models.post import Post
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
+
 
 class Editpost(webapp2.RequestHandler):
 
@@ -38,9 +39,11 @@ class Editpost(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         currentUsername = SecureCookie.decryptSecureCookie(username)
@@ -50,7 +53,10 @@ class Editpost(webapp2.RequestHandler):
         # Only allow post-owner to edit post
         if currentUsername != post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not the owner of the post, you cannot edit this post",
+                    currentUsername=currentUsername))
             return
         self.response.write(
             template.render(
@@ -65,9 +71,11 @@ class Editpost(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
         currentUsername = SecureCookie.decryptSecureCookie(username)
         id = self.request.get('id')
@@ -75,7 +83,10 @@ class Editpost(webapp2.RequestHandler):
         # Only allow post-owner to edit post
         if currentUsername != post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the post, you cannot edit this post",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not the owner of the post, you cannot edit this post",
+                    currentUsername=currentUsername))
             return
         subject = self.request.get('subject')
         content = self.request.get('content')

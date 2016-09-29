@@ -1,13 +1,15 @@
-#Main page handler
+# Main page handler
 import webapp2
 from models.post import Post
 from models.like import Like
 from google.appengine.ext import db
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
 import re
 import time
 
 # Front/Main Page Handler
+
+
 class MainPage(webapp2.RequestHandler):
 
     def get(self, id=None):

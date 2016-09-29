@@ -4,7 +4,8 @@ import time
 import re
 from models.comment import Comment
 from models.post import Post
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
+
 
 class Editcomment(webapp2.RequestHandler):
 
@@ -31,9 +32,11 @@ class Editcomment(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         commentid = self.request.get('commentid')
@@ -43,7 +46,10 @@ class Editcomment(webapp2.RequestHandler):
         # Only allow comment-owner to edit comment
         if currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not the owner of the comment, you cannot edit this comment",
+                    currentUsername=currentUsername))
             return
         template = jinja_env.get_template('editcomment.html')
         self.response.write(
@@ -57,9 +63,11 @@ class Editcomment(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         currentUsername = SecureCookie.decryptSecureCookie(username)
@@ -72,7 +80,10 @@ class Editcomment(webapp2.RequestHandler):
         # Only allow comment-owner to edit comment
         if currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of the comment, you cannot edit this comment",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not the owner of the comment, you cannot edit this comment",
+                    currentUsername=currentUsername))
             return
 
         if not self.validateContent(content):

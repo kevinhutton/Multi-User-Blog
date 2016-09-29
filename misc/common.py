@@ -5,14 +5,19 @@ import hashlib
 import string
 
 
-# Load jinja2 html templates , we only need to do this once for the whole application
+# Load jinja2 html templates , we only need to do this once for the whole
+# application
 
-template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')
+template_dir = os.path.join(
+    os.path.dirname(
+        os.path.dirname(__file__)),
+    'templates')
 jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(template_dir),
     autoescape=True)
 
 # Store cookies with hash value so they can't be tampered with
+
 
 class SecureCookie():
 
@@ -55,7 +60,8 @@ class SecureCookie():
         if not cookieValue:
             return False
         value, hashedValue = cookieValue.split("|")
-        if not value  or not (SecureCookie.createSecureCookie(value) == cookieValue):
+        if not value or not (
+                SecureCookie.createSecureCookie(value) == cookieValue):
             return False
         return True
 
@@ -97,4 +103,3 @@ class Password():
         actualPasswordHash = hashlib.sha256(
             Password.secret + actualPassword + salt).hexdigest()
         return passwordHash == actualPasswordHash
-

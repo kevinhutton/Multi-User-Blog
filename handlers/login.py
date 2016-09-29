@@ -1,10 +1,11 @@
 # Login page handler
 
 import webapp2
-from misc.common import jinja_env,SecureCookie,Password
+from misc.common import jinja_env, SecureCookie, Password
 from google.appengine.ext import db
 from models.user import User
 import re
+
 
 class Login(webapp2.RequestHandler):
 

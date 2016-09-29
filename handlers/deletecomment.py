@@ -1,11 +1,12 @@
 # Delete a given comment
 
 import webapp2
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
 from models.post import Post
 from models.comment import Comment
 import time
 import re
+
 
 class Deletecomment(webapp2.RequestHandler):
 
@@ -17,9 +18,11 @@ class Deletecomment(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         commentid = self.request.get('commentid')
@@ -29,7 +32,10 @@ class Deletecomment(webapp2.RequestHandler):
         # Only allow deletion if comment owner is issuing delete
         if comment and currentUsername != comment.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not the owner of this comment, you cannot delete this comment",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not the owner of this comment, you cannot delete this comment",
+                    currentUsername=currentUsername))
             return
         else:
             key = self.deleteComment(comment)

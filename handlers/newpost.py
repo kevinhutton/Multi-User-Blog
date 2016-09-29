@@ -2,7 +2,7 @@
 import webapp2
 import time
 from models.post import Post
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
 import time
 import re
 
@@ -34,9 +34,11 @@ class Newpost(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
         else:
             template = jinja_env.get_template('newpost.html')
@@ -49,9 +51,11 @@ class Newpost(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         subject = self.request.get('subject')
@@ -75,6 +79,7 @@ class Newpost(webapp2.RequestHandler):
         else:
             # Create Post entity , sleep prior to displaying the posting
             # page due to Data Store Delay
-            key = self.insertPost(subject, content, SecureCookie.decryptSecureCookie(username))
+            key = self.insertPost(
+                subject, content, SecureCookie.decryptSecureCookie(username))
             time.sleep(1)
             self.redirect('/%s' % key)

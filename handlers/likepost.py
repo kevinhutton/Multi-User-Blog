@@ -4,9 +4,10 @@
 import webapp2
 from models.like import Like
 from models.post import Post
-from misc.common import jinja_env,SecureCookie
+from misc.common import jinja_env, SecureCookie
 import time
 import re
+
 
 class Likepost(webapp2.RequestHandler):
 
@@ -24,9 +25,11 @@ class Likepost(webapp2.RequestHandler):
 
         # Make sure user is logged in and cookie is valid
         username = self.request.cookies.get('username')
-        if not SecureCookie.verifySecureCookie(username) :
+        if not SecureCookie.verifySecureCookie(username):
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You must be logged in to view this page"))
+            self.response.write(
+                template.render(
+                    error="You must be logged in to view this page"))
             return
 
         postid = self.request.get('id')
@@ -35,7 +38,10 @@ class Likepost(webapp2.RequestHandler):
         # Do not allow users to like their own post
         if currentUsername == post.username:
             template = jinja_env.get_template('error.html')
-            self.response.write(template.render(error="You are not allowed to like your own post!",currentUsername=currentUsername))
+            self.response.write(
+                template.render(
+                    error="You are not allowed to like your own post!",
+                    currentUsername=currentUsername))
             return
         like = post.likes.filter("username =", currentUsername).get()
 
@@ -45,5 +51,6 @@ class Likepost(webapp2.RequestHandler):
             time.sleep(1)
             self.redirect('/')
         else:
-            #Do nothing , just redirect if the user has already liked the post before
+            # Do nothing , just redirect if the user has already liked the post
+            # before
             self.redirect('/')

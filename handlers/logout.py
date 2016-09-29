@@ -2,6 +2,7 @@
 
 import webapp2
 
+
 class Logout(webapp2.RequestHandler):
 
     # Delete username cookie

@@ -3,7 +3,8 @@
 import webapp2
 import re
 from models.user import User
-from misc.common import jinja_env,SecureCookie,Password
+from misc.common import jinja_env, SecureCookie, Password
+
 
 class Signup(webapp2.RequestHandler):
 
