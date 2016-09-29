@@ -55,7 +55,7 @@ class Editcomment(webapp2.RequestHandler):
         self.response.write(
             template.render(
                 commentid=commentid,
-                content=comment.content))
+                content=comment.content, currentUsername=currentUsername))
 
     # Handle comment edit data
 
