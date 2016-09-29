@@ -30,6 +30,7 @@ class Editpost(webapp2.RequestHandler):
         post.subject = subject
         post.content = content
         post.put()
+        return post.key().id()
 
     # Display edit post form
 
@@ -93,6 +94,6 @@ class Editpost(webapp2.RequestHandler):
             template = jinja_env.get_template('editpost.html')
             self.response.write(template.render(**errorMessages))
         else:
-            key = self.editPost(id, subject, content)
+            key = self.editPost(post, subject, content)
             time.sleep(1)
             self.redirect('/%s' % key)
