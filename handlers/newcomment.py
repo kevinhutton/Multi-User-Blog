@@ -1,5 +1,4 @@
 # New comment handler
-
 import webapp2
 import re
 import time

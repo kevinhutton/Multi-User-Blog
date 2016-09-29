@@ -1,5 +1,4 @@
 # Handler for Welcome page displayed after login or signup
-# If site is visted without username cookie , redirect to error page which contains login/signup links
 
 import webapp2
 from misc.common import jinja_env,SecureCookie
@@ -9,7 +8,6 @@ class Welcome(webapp2.RequestHandler):
     def get(self):
 
         # Make sure user is logged in and cookie is valid
-
         username = self.request.cookies.get('username')
         if not SecureCookie.verifySecureCookie(username) :
             template = jinja_env.get_template('error.html')

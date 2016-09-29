@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Welcome!</title>
-    <link href="/css/main.css" rel="stylesheet">
-  </head>
-  <body>
-   <h1> Welcome, {{currentUsername}}</h1>
-   {% include 'menu.html' %}
-  </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1> Welcome, {{currentUsername}}</h1>
+{% endblock %}

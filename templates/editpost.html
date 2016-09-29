@@ -1,43 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
-    <title>Edit Post</title>
-    <link href="/css/main.css" rel="stylesheet">
-  </head>
-  <body>
-    <h2>Edit Post</h2>
-    <form method="post">
-      <input type="hidden" value="{{id}}" name="id">
-      <table>
-        <tr>
-          <td class="label">
-            Subject
-          </td>
-          <td>
-            <input type="text" name="subject" value="{{subject}}">
-          </td>
-          <td class="error">
-          {{subjecterror}}
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Body
-          </td>
-          <td>
-            <textarea name="content"
-                style="height: 100px; width: 400px;">{{content}}</textarea>
-          </td>
-          <td class="error">
-          {{contenterror}}
-          </td>
-        </tr>
-      </table>
-      <input type="submit">
-    </form>
-    {% include 'menu.html' %}
-  </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Post</h2>
+<form method="post">
+  <input type="hidden" value="{{id}}" name="id">
+  <table>
+    <tr>
+      <td class="label">
+        Subject
+      </td>
+      <td>
+        <input type="text" name="subject" value="{{subject}}">
+      </td>
+      <td class="error">
+      {{subjecterror}}
+      </td>
+    </tr>
+    <tr>
+      <td class="label">
+        Body
+      </td>
+      <td>
+        <textarea name="content"
+            style="height: 100px; width: 400px;">{{content}}</textarea>
+      </td>
+      <td class="error">
+      {{contenterror}}
+      </td>
+    </tr>
+  </table>
+  <input type="submit">
+</form>
+{% endblock %}

@@ -1,4 +1,5 @@
 # Delete a given post
+
 import webapp2
 from misc.common import jinja_env,SecureCookie
 from models.post import Post

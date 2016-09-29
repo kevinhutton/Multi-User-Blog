@@ -18,7 +18,7 @@ class Likepost(webapp2.RequestHandler):
         like.put()
         return like.key().id()
 
-# Increment Like counter
+    # Increment Like counter
 
     def post(self):
 

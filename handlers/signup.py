@@ -8,7 +8,6 @@ from misc.common import jinja_env,SecureCookie,Password
 class Signup(webapp2.RequestHandler):
 
     # Create User Entity
-
     def createUser(self, username, password, email=None):
 
         passwordHash = Password.createPasswordHash(password, None)

@@ -1,8 +1,5 @@
-
-#imports
-# Al
+# main.py
 import webapp2
-
 from handlers.mainpage import MainPage
 from handlers.newpost  import Newpost
 from handlers.editpost import Editpost

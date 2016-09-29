@@ -1,3 +1,4 @@
+#Unlike post handler
 import webapp2
 from misc.common import jinja_env,SecureCookie
 from models.post import Post
@@ -14,7 +15,6 @@ class Unlikepost(webapp2.RequestHandler):
     def post(self):
 
         # Make sure user is logged in and cookie is valid
-
         username = self.request.cookies.get('username')
         if not SecureCookie.verifySecureCookie(username) :
             template = jinja_env.get_template('error.html')
@@ -23,11 +23,10 @@ class Unlikepost(webapp2.RequestHandler):
         currentUsername = SecureCookie.decryptSecureCookie(username)
 
         # Get post which is being liked
-
         postid = self.request.get('id')
         post = Post.get_by_id(int(postid))
 
-        # Do not allow users to like their own post
+        # Do not allow users to unlike their own post
         if currentUsername == post.username:
             template = jinja_env.get_template('error.html')
             self.response.write(template.render(error="You are not allowed to unlike your own post!"))

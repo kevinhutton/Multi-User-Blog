@@ -1,3 +1,4 @@
+#Main page handler
 import webapp2
 from models.post import Post
 from models.like import Like
